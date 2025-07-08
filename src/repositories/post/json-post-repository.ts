@@ -9,9 +9,19 @@ const ROOT_DIR = process.cwd();
 // Obtenção dinâmica do path do arquivo JSON que estão os dados
 const JSON_POSTS_FILE_PATH = resolve(ROOT_DIR, "src", "db", "seed", "posts.json");
 
+const SIMULATE_WAIT_IN_MS = 5000;
+
 // Classe que implementa o respositório com base no contrato (Interface)
 // Ou seja, ela implementa a lógica de acesso aos dados da fonte existente
 export class JsonPostRepository implements PostRepository {
+
+  // Função para verificar e acionar ou não o loading para espera de carregamento
+  private async simulateWait() {
+    if (SIMULATE_WAIT_IN_MS <=0) return;
+
+    await new Promise(resolve => setTimeout(resolve, SIMULATE_WAIT_IN_MS));
+
+  }
 
   // Metodo personalizado privado (acessível apenas dentro da classe) para leitura do arquivo em disco
   private async readFromDisk(): Promise<PostModel[]> {
@@ -34,6 +44,9 @@ export class JsonPostRepository implements PostRepository {
   // É um metodo assincrono para poder ler os dados do disco e obter os dados de todos os posts
   async findAll(): Promise<PostModel[]> {
 
+    // Invocação da função para esperar ou não o Loading
+    await this.simulateWait();
+
     // Variável com o resultado da invocação do metodo da propria classe que faz a leitura no disco
     const posts = await this.readFromDisk();
 
@@ -45,6 +58,9 @@ export class JsonPostRepository implements PostRepository {
   // O "contrato" da "interface" PostRespository defini que o metodo abaixo esteja nas suas implementações
   // É um metodo assincrono para obter os dados de apenas um post pelo seu ID
   async findById(id: string): Promise<PostModel> {
+
+    // Invocação da função para esperar ou não o Loading
+    await this.simulateWait();
 
     // Variável com o resultado da invocação do metodo da propria classe para obter todos os posts
     const posts = await this.findAll()
